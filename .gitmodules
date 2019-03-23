@@ -1,6 +1,6 @@
 [submodule "src/InfiniTAM"]
 	path = src/InfiniTAM
-	url = https://github.com/AndreiBarsan/InfiniTAM
+	url = https://github.com/aravindsv/InfiniTAM
 [submodule "src/Pangolin"]
 	path = src/Pangolin
 	url = https://github.com/stevenlovegrove/Pangolin
