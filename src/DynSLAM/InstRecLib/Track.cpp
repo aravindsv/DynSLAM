@@ -3,6 +3,7 @@
 #include "Track.h"
 #include "InstanceTracker.h"
 #include "../../libviso2/src/viso.h"
+#include <iomanip>
 
 namespace instreclib {
 namespace reconstruction {
@@ -249,7 +250,7 @@ void Track::Update(const Eigen::Matrix4f &egomotion,
         float rot_error = RotationError(error);
 
         if (verbose) {
-          cout << "Object " << id_ << " has " << setw(8) << setprecision(4) << trans_error
+          cout << "Object " << id_ << " has " << setw(8) << std::setprecision(4) << trans_error
                << " translational error w.r.t. the egomotion." << endl;
           cout << "Rotation error: " << rot_error << "(currently unused)" << endl;
           cout << endl << "ME: " << endl << egomotion << endl;

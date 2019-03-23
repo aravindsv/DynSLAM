@@ -6,6 +6,8 @@
 #include "DynSlam.h"
 #include "Evaluation/Evaluation.h"
 
+#include "opencv2/opencv.hpp"
+
 DEFINE_bool(dynamic_weights, false, "Whether to use depth-based weighting when performing fusion.");
 DECLARE_bool(semantic_evaluation);
 DECLARE_int32(evaluation_delay);

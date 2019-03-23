@@ -3,6 +3,7 @@
 #include "ILidarEvalCallback.h"
 #include "EvaluationCallback.h"
 #include "SegmentedEvaluationCallback.h"
+#include <iomanip>
 
 namespace dynslam {
 namespace eval {
@@ -20,10 +21,10 @@ void PrettyPrintStats(const string &label, const DepthFrameEvaluation &evals) {
   for (auto &eval : evals.evaluations) {
     cout << "[" << label << "] Evaluation on frame #" << evals.meta.frame_idx << ", delta max = "
          << setw(2) << eval.delta_max
-         << "   Fusion accuracy = " << setw(7) << setprecision(3)
+         << "   Fusion accuracy = " << setw(7) << std::setprecision(3)
          << eval.fused_result.GetCorrectPixelRatio(missing_depths_are_errors)
          << " @ " << eval.fused_result.correct_count << " correct px "
-         << " | Input accuracy  = " <<  setw(7) << setprecision(3)
+         << " | Input accuracy  = " <<  setw(7) << std::setprecision(3)
          << eval.input_result.GetCorrectPixelRatio(missing_depths_are_errors)
          << " @ " << eval.input_result.correct_count << " correct px "
          << endl;

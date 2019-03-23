@@ -10,6 +10,8 @@
 #include <iomanip>
 #include <sstream>
 
+#include "opencv2/opencv.hpp"
+
 namespace instreclib {
 namespace segmentation {
 

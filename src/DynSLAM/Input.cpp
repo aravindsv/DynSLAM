@@ -1,6 +1,8 @@
 
+#include <iostream>
 #include "Input.h"
 #include "PrecomputedDepthProvider.h"
+#include "opencv2/opencv.hpp"
 
 namespace dynslam {
 

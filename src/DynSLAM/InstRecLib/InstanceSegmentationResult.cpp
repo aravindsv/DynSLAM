@@ -19,12 +19,12 @@ ostream &operator<<(ostream &out, const InstanceDetection &detection) {
 ostream &operator<<(ostream &out, const InstanceSegmentationResult &segmentation_result) {
   if (segmentation_result.instance_detections.size() > 0) {
     out << "Detected " << segmentation_result.instance_detections.size() << " objects in the frame."
-        << std::endl;
+        << endl;
     for (const auto &instance : segmentation_result.instance_detections) {
-      out << "\t " << instance << std::endl;
+      out << "\t " << instance << endl;
     }
   } else {
-    out << "Nothing detected in the frame." << std::endl;
+    out << "Nothing detected in the frame." << endl;
   }
   return out;
 }

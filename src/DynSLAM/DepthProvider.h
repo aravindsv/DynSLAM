@@ -122,7 +122,7 @@ class DepthProvider {
         int32_t depth_mm =
             static_cast<int32_t>(kMetersToMillimeters * scale * DepthFromDisparity(disp, calibration));
 
-        if (abs(disp) < 1e-5) {
+        if (std::abs(disp) < 1e-5) {
           depth_mm = 0;
         }
 

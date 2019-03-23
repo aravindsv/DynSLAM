@@ -1,6 +1,7 @@
 
 
 #include "Mask.h"
+#include "opencv2/opencv.hpp"
 
 namespace instreclib {
 namespace utils {

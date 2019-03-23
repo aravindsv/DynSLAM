@@ -8,6 +8,7 @@
 //#include <backward.hpp>
 #include <gflags/gflags.h>
 #include <opencv/cv.h>
+#include "opencv2/opencv.hpp"
 #include <opencv/highgui.h>
 #include <pangolin/pangolin.h>
 
@@ -927,7 +928,7 @@ public:
     int64_t frame_time_ms = Toc(true);
     float fps = 1000.0f / static_cast<float>(frame_time_ms);
     cout << "[Finished frame " << dyn_slam_->GetCurrentFrameNo() << " in " << frame_time_ms
-         << "ms @ " << setprecision(4) << fps << " FPS (approx.)]"
+         << "ms @ " << std::setprecision(4) << fps << " FPS (approx.)]"
          << endl;
   }
 

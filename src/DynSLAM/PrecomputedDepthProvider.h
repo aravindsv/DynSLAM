@@ -2,9 +2,11 @@
 #define DYNSLAM_PRECOMPUTEDDEPTHPROVIDER_H
 
 #include <string>
+#include <iostream>
 
 #include "DepthProvider.h"
 #include "Input.h"
+
 
 namespace dynslam {
 
