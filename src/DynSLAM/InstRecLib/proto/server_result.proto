@@ -1,0 +1,39 @@
+syntax = "proto2";
+
+message ServerMat {
+    required bytes array = 1;
+    required uint64 dim1 = 2;
+    required uint64 dim2 = 3;
+}
+
+message ServerMatRGB {
+    required bytes array = 1;
+    required uint64 dim1 = 2;
+    required uint64 dim2 = 3;
+}
+
+message ServerBoundingBox {
+    required uint64 x0 = 1;
+    required uint64 y0 = 2;
+    required uint64 x1 = 3;
+    required uint64 y1 = 4;
+}
+
+message ServerMask {
+    required ServerMat mat = 1;
+    required ServerBoundingBox bbox = 2;
+}
+
+message ServerInput {
+    required ServerMatRGB image = 1;
+}
+
+message ServerDetection {
+    required ServerMask mask = 1;
+    required float class_probability = 2;
+    required uint32 class_id = 3;
+}
+
+message ServerResult {
+    repeated ServerDetection detections = 1;
+}

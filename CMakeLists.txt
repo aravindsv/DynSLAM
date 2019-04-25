@@ -21,7 +21,7 @@ endmacro()
 #message(STATUS "backwards-cpp-enhanced stack traces? " ${WITH_BACKWARDS_CPP})
 
 # We use Eigen for generic matrix support and linear algebra routines.
-# set(EIGEN3_ROOT ${PROJECT_SOURCE_DIR}/src/eigen)
+set(EIGEN3_ROOT ${PROJECT_SOURCE_DIR}/src/eigen)
 # set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(Eigen3 3.3 REQUIRED)

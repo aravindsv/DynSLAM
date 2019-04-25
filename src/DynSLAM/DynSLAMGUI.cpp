@@ -15,6 +15,7 @@
 #include "DynSlam.h"
 #include "PrecomputedDepthProvider.h"
 #include "InstRecLib/VisoSparseSFProvider.h"
+#include "InstRecLib/LiveSegmentationProvider.h"
 #include "DSHandler3D.h"
 #include "Evaluation/Evaluation.h"
 #include "Evaluation/ErrorVisualizationCallback.h"
@@ -1227,12 +1228,16 @@ void BuildDynSlamKittiOdometry(const string &dataset_root,
       voxel_decay_params,
       FLAGS_use_depth_weighting);
 
-  const string seg_folder = dataset_root + "/" + input_config.segmentation_folder;
-  auto segmentation_provider =
-      new instreclib::segmentation::PrecomputedSegmentationProvider(
-          seg_folder, frame_offset, static_cast<float>(downscale_factor));
 
-  VisualOdometryStereo::parameters sf_params;
+  const string seg_folder = dataset_root + "/" + input_config.segmentation_folder;
+//  auto segmentation_provider =
+//      new instreclib::segmentation::PrecomputedSegmentationProvider(
+//          seg_folder, frame_offset, static_cast<float>(downscale_factor));
+
+
+  auto segmentation_provider = new instreclib::segmentation::LiveSegmentationProvider();
+
+      VisualOdometryStereo::parameters sf_params;
   // TODO(andrei): The main VO (which we're not using viso2 for, at the moment (June '17) and the
   // "VO" we use to align object instance frames have VASTLY different requirements, so we should
   // use separate parameter sets for them.

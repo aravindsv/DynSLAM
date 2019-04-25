@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "opencv2/opencv.hpp"
 
@@ -161,6 +162,9 @@ vector<InstanceDetection> PrecomputedSegmentationProvider::ReadInstanceInfo(
 }
 
 shared_ptr<InstanceSegmentationResult> PrecomputedSegmentationProvider::SegmentFrame(const cv::Mat3b &rgb) {
+
+  cout << "TESTING! SegmentFrame called" << endl;
+
   if (last_seg_preview_ == nullptr) {
     last_seg_preview_ = new cv::Mat3b(rgb.rows, rgb.cols);
   }
@@ -187,10 +191,12 @@ shared_ptr<InstanceSegmentationResult> PrecomputedSegmentationProvider::SegmentF
 }
 
 const cv::Mat3b* PrecomputedSegmentationProvider::GetSegResult() const {
+//  cout << "TESTING: GetSegResult const called" << endl;
   return this->last_seg_preview_;
 }
 
 cv::Mat3b* PrecomputedSegmentationProvider::GetSegResult() {
+//  cout << "TESTING: GetSegResult const called" << endl;
   return this->last_seg_preview_;
 }
 
