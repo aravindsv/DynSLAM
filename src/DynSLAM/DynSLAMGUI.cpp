@@ -176,7 +176,7 @@ public:
     Eigen::Matrix34f projection = dyn_slam_->GetLeftRgbProjectionMatrix();
     const Eigen::Matrix3f Kinv = projection.block(0, 0, 3, 3).inverse();
     glColor3f(color(0), color(1), color(2));
-    pangolin::glDrawFrustrum(Kinv, width_, height_, inv_pose, frustum_scale);
+    pangolin::glDrawFrustum(Kinv, width_, height_, inv_pose, frustum_scale);
   }
 
   /// \brief Executes the main Pangolin input and rendering loop.
