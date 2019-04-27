@@ -12,7 +12,7 @@
 	url = https://@github.com/AndreiBarsan/pfmLib
 [submodule "src/libviso2"]
 	path = src/libviso2
-	url = https://github.com/AndreiBarsan/libviso2-mirror
+	url = https://github.com/aravindsv/libviso2-mirror
 [submodule "src/eigen"]
 	path = src/eigen
 	url = https://github.com/eigenteam/eigen-git-mirror.git

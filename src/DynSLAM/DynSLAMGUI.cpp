@@ -1232,11 +1232,10 @@ void BuildDynSlamKittiOdometry(const string &dataset_root,
       new instreclib::segmentation::PrecomputedSegmentationProvider(
           seg_folder, frame_offset, static_cast<float>(downscale_factor));
 
-  VisualOdometryStereo::parameters sf_params;
-  // TODO(andrei): The main VO (which we're not using viso2 for, at the moment (June '17) and the
-  // "VO" we use to align object instance frames have VASTLY different requirements, so we should
-  // use separate parameter sets for them.
-  sf_params.base = baseline_m;
+  VisualOdometryMono::parameters sf_params;
+  // Height and pitch parameters are taken from KITTI Vision Benchmark Suite website
+  sf_params.height = 1.7; // Height of camera above the ground (meters)
+  sf_params.pitch = -0.03; // Pitch of the camera (radians, negative is down from horizon)
   sf_params.match.nms_n = 3;          // Optimal from KITTI leaderboard: 3 (also the default)
   sf_params.match.half_resolution = 0;
   sf_params.match.multi_stage = 1;    // Default = 1 (= 0 => much slower)

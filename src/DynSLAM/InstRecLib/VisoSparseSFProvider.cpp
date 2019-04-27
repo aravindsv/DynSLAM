@@ -17,7 +17,6 @@ void VisoSparseSFProvider::ComputeSparseSF(const ViewPair &, const ViewPair &cur
 
   // TODO(andrei): Is this safe? What if OpenCV represents the images differently?
   uint8_t *left_bytes = current_view.first->data;
-  uint8_t *right_bytes = current_view.second->data;
 
   // TODO(andrei): Consider caching this char version in an umbrella object, in case other parts
   // of the engine need it...
@@ -44,7 +43,7 @@ void VisoSparseSFProvider::ComputeSparseSF(const ViewPair &, const ViewPair &cur
       current_view.first->rows,
       current_view.first->cols
   };
-  bool viso2_success = stereo_vo_->process(left_bytes, right_bytes, dims);
+  bool viso2_success = mono_vo_->process(left_bytes, dims);
 
   if (! viso2_success) {
     matches_available_ = false;
@@ -53,7 +52,7 @@ void VisoSparseSFProvider::ComputeSparseSF(const ViewPair &, const ViewPair &cur
 //      Tic("get matches");
     // Just marshal the data from the viso-specific format to DynSLAM format.
     std::vector<RawFlow, Eigen::aligned_allocator<RawFlow>> flow;
-    for (const Matcher::p_match &match : stereo_vo_->getRawMatches()) {
+    for (const Matcher::p_match &match : mono_vo_->getRawMatches()) {
       flow.emplace_back(match.u1c, match.v1c, match.i1c, match.u2c, match.v2c, match.i2c,
                         match.u1p, match.v1p, match.i1p, match.u2p, match.v2p, match.i2p);
     }
@@ -62,7 +61,7 @@ void VisoSparseSFProvider::ComputeSparseSF(const ViewPair &, const ViewPair &cur
 
     matches_available_ = true;
 //      cout << "viso2 success! " << latest_flow_.matches.size() << " matches found." << endl;
-//      cout << "               " << stereo_vo_->getNumberOfInliers() << " inliers" << endl;
+//      cout << "               " << mono_vo_->getNumberOfInliers() << " inliers" << endl;
 //      Toc();
   }
 }
@@ -78,7 +77,7 @@ std::vector<double> VisoSparseSFProvider::ExtractMotion(const std::vector<RawFlo
                                          f.curr_left(0), f.curr_left(1), f.curr_left_idx,
                                          f.curr_right(0), f.curr_right(1), f.curr_right_idx));
   }
-  return stereo_vo_->estimateMotion(flow_viso, initial_estimate);
+  return mono_vo_->estimateMotion(flow_viso, initial_estimate);
 }
 
 } // namespace instreclib

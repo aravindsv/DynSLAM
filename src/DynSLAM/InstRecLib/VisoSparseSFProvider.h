@@ -8,7 +8,7 @@
 
 #include <opencv/highgui.h>
 
-#include "../../libviso2/src/viso_stereo.h"
+#include "../../libviso2/src/viso_mono.h"
 
 namespace instreclib {
 
@@ -19,14 +19,14 @@ Eigen::Matrix4d VisoToEigen(const Matrix &viso_matrix);
 // view.
 class VisoSparseSFProvider : public SparseSFProvider {
  public:
-  VisoSparseSFProvider(VisualOdometryStereo::parameters &stereo_vo_params)
-    : stereo_vo_(new VisualOdometryStereo(stereo_vo_params)),
+  VisoSparseSFProvider(VisualOdometryMono::parameters &mono_vo_params)
+    : mono_vo_(new VisualOdometryMono(mono_vo_params)),
       matches_available_(false),
       latest_flow_(SparseSceneFlow())
   { }
 
   virtual ~VisoSparseSFProvider() {
-    delete stereo_vo_;
+    delete mono_vo_;
   }
 
   // We ignore the previous view, since libviso2 stores the previous frame internally.
@@ -43,7 +43,7 @@ class VisoSparseSFProvider : public SparseSFProvider {
   }
 
   Eigen::Matrix4f GetLatestMotion() const override {
-    return VisoToEigen(stereo_vo_->getMotion()).cast<float>();
+    return VisoToEigen(mono_vo_->getMotion()).cast<float>();
 
   }
 
@@ -51,7 +51,7 @@ class VisoSparseSFProvider : public SparseSFProvider {
                                     const std::vector<double> &initial_estimate) const override;
 
  private:
-  VisualOdometryStereo *stereo_vo_;
+  VisualOdometryMono *mono_vo_;
   bool matches_available_;
   SparseSceneFlow latest_flow_;
 };
