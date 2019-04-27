@@ -1235,7 +1235,10 @@ void BuildDynSlamKittiOdometry(const string &dataset_root,
 //          seg_folder, frame_offset, static_cast<float>(downscale_factor));
 
 
-  auto segmentation_provider = new instreclib::segmentation::LiveSegmentationProvider();
+  auto segmentation_provider = new instreclib::segmentation::LiveSegmentationProvider(
+          // using for previews
+          seg_folder, frame_offset, static_cast<float>(downscale_factor)
+          );
 
       VisualOdometryStereo::parameters sf_params;
   // TODO(andrei): The main VO (which we're not using viso2 for, at the moment (June '17) and the

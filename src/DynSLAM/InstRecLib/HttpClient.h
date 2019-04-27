@@ -5,8 +5,7 @@
 
 #include <string>
 #include <sstream>
-#include <opencv2/core/mat.hpp>
-#include "InstanceSegmentationResult.h"
+
 
 #include <curl/curl.h>
 
@@ -25,10 +24,9 @@ class HttpClient {
 
 public:
     HttpClient();
-
     ~HttpClient();
 
-    std::shared_ptr<InstanceSegmentationResult> post(const cv::Mat3b &rgb);
+    std::string post(const std::string &data);
 
     static void global_cleanup();
 
