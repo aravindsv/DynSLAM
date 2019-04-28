@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "Timer.h"
+
 
 using namespace std;
 
@@ -36,8 +38,7 @@ HttpClient::HttpClient() {
     curl_easy_setopt(m_handle, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(m_handle, CURLOPT_FAILONERROR, 1L);
     curl_easy_setopt(m_handle, CURLOPT_ERRORBUFFER, m_err_buf);
-
-
+//    curl_easy_setopt(m_handle, CURLOPT_ACCEPT_ENCODING, "");
 
 //    m_headers = NULL;
 //    m_headers = curl_slist_append(m_headers, "Content-Type: application/binary");
@@ -57,6 +58,8 @@ HttpClient::~HttpClient() {
 
 string HttpClient::post(const string &data) {
 
+    Timer t1("HttpClient::post: setup");
+
     // clear the output buffer.
     m_out_stream.str("");
 
@@ -65,13 +68,6 @@ string HttpClient::post(const string &data) {
     /* set the size of the postfields data */
 //    curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE, data.size());
 
-
-    cout << "data: ";
-    for (int ii = 0; ii < 10; ii++) {
-        cout << (int) data[ii];
-    }
-
-    cout << endl;
 
     // TODO: mime should have its own class with destructor.
     curl_mime *multipart = curl_mime_init(m_handle);
@@ -84,7 +80,13 @@ string HttpClient::post(const string &data) {
     /* Set the form info */
     curl_easy_setopt(m_handle, CURLOPT_MIMEPOST, multipart);
 
+    t1.print();
+
+    Timer t2("HttpClient::post: perform");
+
     CURLcode code = curl_easy_perform(m_handle);
+
+    t2.print();
 
     curl_mime_free(multipart);
 
@@ -98,6 +100,8 @@ string HttpClient::post(const string &data) {
 
 
 size_t HttpClient::write_data_cb(void *buffer, size_t size, size_t nmemb, void *user_ptr) {
+
+    Timer t1("HttpClient::write_data_cb");
 
 //    cerr << "write data cb called" << endl;
 

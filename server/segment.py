@@ -122,44 +122,16 @@ class Segmenter:
         # backend.clear_session()
 
         with self.graph.as_default():
-            result = self.model.detect([image], verbose=1)[0]
 
-        print(f'result = {result}')
-
-        return result
-
-        seg_list = []
-        for image_path in image_path_list:
             t1 = time.perf_counter()
-            image = skimage.io.imread(image_path)
+            result = self.model.detect([image], verbose=1)[0]
             t2 = time.perf_counter()
 
-            result = self.model.detect([image], verbose=1)[0]
+            print(f'detect time = {t2 - t1}')
 
-            # TODO: filter out non-car results to save memory
+        # print(f'result = {result}')
 
-            t3 = time.perf_counter()
-            seg = Segmentation(result)
-            seg_list.append(seg)
-
-            print(f'timers: imread = {t2 - t1:.1f}, detect = {t3 - t1:.1f}')
-
-        #
-        # image_list = []
-        #
-        # for image_path in image_path_list:
-        #     image = skimage.io.imread(image_path)
-        #     image_list.append(image)
-        #
-        # result_list = self.model.detect(image_list, verbose=1)
-        #
-        # seg_list = []
-        #
-        # for result in result_list:
-        #     seg = Segmentation(result)
-        #     seg_list.append(seg)
-
-        return seg_list
+        return result
 
 
 def main():

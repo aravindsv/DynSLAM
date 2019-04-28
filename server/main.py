@@ -1,12 +1,30 @@
 from flask import Flask
 from flask import request, make_response
 import numpy as np
+import time
+import cv2
+from flask_compress import Compress
 
 import segment
 
 import server_result_pb2
 
+OCTET_STREAM = 'application/octet-stream'
+
 app = Flask(__name__)
+
+app.config['COMPRESS_MIMETYPES'] = [
+    'text/html',
+    'text/css',
+    'text/xml',
+    'application/json',
+    'application/javascript',
+    'application',
+    OCTET_STREAM
+]
+
+Compress(app)
+
 
 segmenter = segment.make_segmenter()
 
@@ -52,34 +70,69 @@ def serialize_segments(segments):
 @app.route('/post', methods=['POST'])
 def hello_world():
 
-    print(f'len = {request.content_length}')
+    t1 = time.perf_counter()
+
+    # print(f'len = {request.content_length}')
     # print(request.files)
 
+
+    td1 = time.perf_counter()
     data = request.files['server_input'].read()
+    td2 = time.perf_counter()
+
+    print(f'read data runtime = {td2 - td1}')
+
     # img = request.form['image']
 
-    print(data[0:10])
-    print(type(data))
+    # print(data[0:10])
+    # print(type(data))
     # print(type(img))
 
+    t7 = time.perf_counter()
     server_input = server_result_pb2.ServerInput()
+
 
     server_input.ParseFromString(data)
 
-    image = np.frombuffer(server_input.image.array, dtype=np.uint8).reshape(server_input.image.dim1,
-                                                                           server_input.image.dim2, 3)
+    image_array = np.frombuffer(server_input.image.array, dtype=np.uint8)
 
-    print(f'image shape = {image.shape}, dtype={np.dtype}')
+    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+
+    # image = np.frombuffer(server_input.image.array, dtype=np.uint8).reshape(server_input.image.dim1,
+    #                                                                        server_input.image.dim2, 3)
+    t8 = time.perf_counter()
+
+    print(f'deserialize runtime = {t8 - t7}')
+
+    # print(f'image shape = {image.shape}, dtype={np.dtype}')
 
 
+    t5 = time.perf_counter()
     segments = segmenter.segment(image)
+    t6 = time.perf_counter()
+
+    print(f'segment runtiem = {t6 - t5}')
+
+    t3 = time.perf_counter()
 
     result_bytes = serialize_segments(segments)
 
-    print(f'len result = {len(result_bytes)}')
+    t4 = time.perf_counter()
 
+    print(f'serialize rutime = {t4 - t3}')
+
+    # print(f'len result = {len(result_bytes)}')
+
+    tr1 = time.perf_counter()
     response = make_response(result_bytes)
-    response.headers.set('Content-Type', 'application/octet-stream')
+    response.headers.set('Content-Type', OCTET_STREAM)
+
+    tr2 = time.perf_counter()
+    print(f'make response runtime = {tr2 - tr1}')
+
+    t2 = time.perf_counter()
+
+    print(f'/post runtime = {t2 - t1}')
 
     return response
 

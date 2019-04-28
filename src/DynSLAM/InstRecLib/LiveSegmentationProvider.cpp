@@ -9,8 +9,11 @@
 #include <chrono>
 #include <cstring>
 #include <vector>
+#include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "SegmentationDataset.h"
+#include "Timer.h"
+
 
 //#include <boost/process.hpp>
 
@@ -34,9 +37,20 @@ static void opencv_rgb_to_server(const cv::Mat3b &rgb, ServerMatRGB *server_mat)
 
     cout << "rgb rows " << rgb.rows << " cols " << rgb.cols << endl;
 
-    size_t buf_len = rgb.total() * rgb.elemSize();
+//    size_t buf_len = rgb.total() * rgb.elemSize();
 
-    server_mat->set_array((void *) rgb.data, buf_len);
+    vector<uchar> buf;
+
+    vector<int> params;
+    params.push_back(cv::IMWRITE_JPEG_OPTIMIZE);
+    params.push_back(1);
+    params.push_back(cv::IMWRITE_JPEG_QUALITY);
+    params.push_back(30);
+    params.push_back(cv::IMWRITE_JPEG_LUMA_QUALITY);
+    params.push_back(30);
+    cv::imencode(".jpg", rgb, buf, params);
+
+    server_mat->set_array((void *) buf.data(), buf.size());
 
     server_mat->set_dim1(rgb.rows);
     server_mat->set_dim2(rgb.cols);
@@ -123,7 +137,11 @@ static void disp(cv::Mat mat) {
     cv::waitKey(0);
 }
 
+
+
 std::shared_ptr<InstanceSegmentationResult> LiveSegmentationProvider::post(const cv::Mat3b &rgb) {
+
+    Timer t1("live seg post: serialization");
 
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -137,8 +155,15 @@ std::shared_ptr<InstanceSegmentationResult> LiveSegmentationProvider::post(const
         throw runtime_error("Could not serialize ServerInput");
     }
 
-    // TODO: call other post
+    t1.print();
+
+    Timer t2("live seg post: calling http client post");
+
     string output = m_client.post(data);
+
+    t2.print();
+
+    Timer t3("live seg post: parsing");
 
     ServerResult server_result;
 
@@ -146,7 +171,10 @@ std::shared_ptr<InstanceSegmentationResult> LiveSegmentationProvider::post(const
         throw runtime_error("Failed to parse ServerResult");
     }
 
-    return make_segmentation_result(server_result, input_scale_);
+    auto tmp = make_segmentation_result(server_result, input_scale_);
+
+    t3.print();
+    return tmp;
 }
 
 std::shared_ptr<InstanceSegmentationResult> LiveSegmentationProvider::SegmentFrame(const cv::Mat3b &rgb) {
@@ -175,12 +203,15 @@ std::shared_ptr<InstanceSegmentationResult> LiveSegmentationProvider::SegmentFra
 
     // end preview code.
 
-    auto t1 = chrono::steady_clock::now();
+    auto t3 = chrono::steady_clock::now();
+
+//    cv::Mat3b rgb_shrunk;
+//    cv::resize(rgb, rgb_shrunk, cv::Size(), 0.25, 0.25, cv::INTER_LINEAR);
     auto result_ptr = post(rgb);
 
-    auto t2 = chrono::steady_clock::now();
+    auto t4 = chrono::steady_clock::now();
 
-    cout << "TESTING: ellapsed duration: " << chrono::duration<double>(t2 - t1).count() << endl;
+    cout << "TESTING: ellapsed duration: " << chrono::duration<double>(t4 - t3).count() << endl;
 
     return result_ptr;
 
