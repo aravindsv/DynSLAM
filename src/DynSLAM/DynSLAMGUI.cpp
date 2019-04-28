@@ -30,6 +30,7 @@ DEFINE_string(dataset_type,
               "The type of the input dataset at which 'dataset_root' is pointing. Supported are "
               "'kitti-odometry' and 'kitti-tracking'.");
 DEFINE_string(dataset_root, "", "The root folder of the dataset or dataset sequence to use.");
+DEFINE_string(depthmap_root, "precomputed-depth-dispnet", "Root folder for precomputed depthmaps");
 DEFINE_bool(dynamic_mode, true, "Whether DynSLAM should be aware of dynamic objects and attempt to "
                                 "reconstruct them. Disabling this makes the system behave like a "
                                 "vanilla outdoor InfiniTAM.");
@@ -1120,7 +1121,7 @@ void BuildDynSlamKittiOdometry(const string &dataset_root,
   if (FLAGS_dataset_type == kKittiOdometry) {
     if (downscale_factor != 1.0) {
       if (FLAGS_use_dispnet) {
-        input_config = Input::KittiOdometryDispnetLowresConfig(downscale_factor_f);
+        input_config = Input::KittiOdometryDispnetLowresConfig(FLAGS_depthmap_root, downscale_factor_f);
       }
       else {
         input_config = Input::KittiOdometryLowresConfig(downscale_factor_f);
@@ -1128,7 +1129,7 @@ void BuildDynSlamKittiOdometry(const string &dataset_root,
     }
     else {
       if (FLAGS_use_dispnet) {
-        input_config = Input::KittiOdometryDispnetConfig();
+        input_config = Input::KittiOdometryDispnetConfig(FLAGS_depthmap_root);
       }
       else {
         input_config = Input::KittiOdometryConfig();
@@ -1142,7 +1143,7 @@ void BuildDynSlamKittiOdometry(const string &dataset_root,
     }
 
     if (FLAGS_use_dispnet) {
-      input_config = Input::KittiTrackingDispnetConfig(t_seq_id);
+      input_config = Input::KittiTrackingDispnetConfig(FLAGS_depthmap_root, t_seq_id);
     }
     else {
       input_config = Input::KittiTrackingConfig(t_seq_id);

@@ -165,15 +165,16 @@ prepare_depth_dispnet () {
     ds_root="$2"
     ds_split="$3"
     seq_id="$4"
+    depthmap_root="$5"
 
     cd "$DYNSLAM_ROOT"
 
     if [[ "$ds_type" == "kitti-tracking" ]]; then
         path="$ds_root/$ds_split"
-        seq_depth_root="$path/precomputed-depth-dispnet/$(printf '%04d' $seq_id)"
+        seq_depth_root="$path/${depthmap_root:-precomputed-depth-dispnet}/$(printf '%04d' $seq_id)"
     elif [[ "$ds_type" == "kitti-odometry" ]]; then
         path="$ds_root/"
-        seq_depth_root="$path/precomputed-depth-dispnet"
+        seq_depth_root="$path/${depthmap_root:-precomputed-depth-dispnet}"
     else
         fail "Unknown dataset type [$ds_type]."
     fi

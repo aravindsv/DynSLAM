@@ -118,9 +118,9 @@ class Input {
     return config;
   }
 
-  static Config KittiTrackingDispnetConfig(int sequence_id) {
+  static Config KittiTrackingDispnetConfig(const std::string &depthmap_root, int sequence_id) {
     Config config                 = KittiTrackingConfig(sequence_id);
-    config.depth_folder           = utils::Format("precomputed-depth-dispnet/%04d", sequence_id);
+    config.depth_folder           = utils::Format("%s/%04d", depthmap_root, sequence_id);
     config.depth_fname_format     = "%06d.pfm";
     config.read_depth             = false;
     return config;
@@ -139,22 +139,22 @@ class Input {
     return config;
   }
 
-  static Config KittiOdometryDispnetConfig() {
+  static Config KittiOdometryDispnetConfig(const std::string &depthmap_root) {
     Config config                 = KittiOdometryConfig();
-    config.depth_folder           = "precomputed-depth-dispnet";
+    config.depth_folder           = depthmap_root;
     config.depth_fname_format     = "%06d.pfm";
     config.read_depth             = false;
     return config;
   }
 
-  static Config KittiOdometryDispnetLowresConfig(float factor) {
-    Config config = KittiOdometryDispnetConfig();
+  static Config KittiOdometryDispnetLowresConfig(const std::string &depthmap_root, float factor) {
+    Config config = KittiOdometryDispnetConfig(depthmap_root);
     config.left_gray_folder       = utils::Format("image_0_%.2f", factor);
     config.right_gray_folder      = utils::Format("image_1_%.2f", factor);
     config.left_color_folder      = utils::Format("image_2_%.2f", factor);
     config.right_color_folder     = utils::Format("image_3_%.2f", factor);
 
-    config.depth_folder           = utils::Format("precomputed-depth-dispnet-%.2f", factor);
+    config.depth_folder           = utils::Format("%s-%.2f", depthmap_root, factor);
     config.segmentation_folder    = utils::Format("seg_image_2-%.2f/mnc", factor);
 
     return config;
