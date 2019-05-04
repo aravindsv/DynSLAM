@@ -768,7 +768,10 @@ public:
       *(this->autoplay_) = ! *(this->autoplay_);
     });
     display_raw_previews_ = new pangolin::Var<bool>("ui.Raw Previews", false, true);
-    preview_sf_ = new pangolin::Var<bool>("ui.Show Scene Flow", false, true);
+    preview_sf_ = new pangolin::Var<bool>("ui.Show [S]cene Flow", false, true);
+    pangolin::RegisterKeyPressCallback('s', [this]() {
+      *(this->preview_sf_) = ! *(this->preview_sf_);
+    });
 
     pangolin::RegisterKeyPressCallback('r', [&]() {
       *display_raw_previews_ = !display_raw_previews_->Get();
