@@ -23,7 +23,7 @@ class HttpClient {
     std::ostringstream m_out_stream;
 
 public:
-    HttpClient();
+    HttpClient(const std::string& host, const std::string& port);
     ~HttpClient();
 
     std::string post(const std::string &data);

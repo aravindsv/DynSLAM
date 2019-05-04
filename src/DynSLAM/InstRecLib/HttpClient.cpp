@@ -3,8 +3,9 @@
 #include "HttpClient.h"
 #include <iostream>
 #include <stdexcept>
+#include "../Utils.h"
 
-#include "Timer.h"
+#include "SimpleTimer.h"
 
 
 using namespace std;
@@ -12,11 +13,13 @@ using namespace std;
 namespace instreclib {
 namespace segmentation {
 
+using namespace dynslam::utils;
+
 static bool global_init_called = false;
 
-HttpClient::HttpClient() {
+HttpClient::HttpClient(const std::string& host, const std::string& port) {
 
-
+    string url = Format("http://%s:%s/post", host.c_str(), port.c_str());
 
     m_err_buf[0] = 0;
 
@@ -28,10 +31,7 @@ HttpClient::HttpClient() {
         throw runtime_error("curl_easy_init failed");
     }
 
-    curl_easy_setopt(m_handle, CURLOPT_URL, "http://bb10.ri.cs.cmu.edu:5000/post");
-//    curl_easy_setopt(m_handle, CURLOPT_URL, "https://postman-echo.com/post");
-//    curl_easy_setopt(m_handle, CURLOPT_URL, "https://postman-echo.com/get?foo1=bar1&foo2=bar2");
-//    curl_easy_setopt(m_handle, CURLOPT_URL, "http://google.com");
+    curl_easy_setopt(m_handle, CURLOPT_URL, url.c_str());
 
     curl_easy_setopt(m_handle, CURLOPT_WRITEFUNCTION, write_data_cb);
     curl_easy_setopt(m_handle, CURLOPT_WRITEDATA, this);
@@ -58,16 +58,10 @@ HttpClient::~HttpClient() {
 
 string HttpClient::post(const string &data) {
 
-    Timer t1("HttpClient::post: setup");
+    SimpleTimer t1("HttpClient::post: setup");
 
     // clear the output buffer.
     m_out_stream.str("");
-
-//    curl_easy_setopt(m_handle, CURLOPT_POSTFIELDS, data.data());
-
-    /* set the size of the postfields data */
-//    curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE, data.size());
-
 
     // TODO: mime should have its own class with destructor.
     curl_mime *multipart = curl_mime_init(m_handle);
@@ -82,7 +76,7 @@ string HttpClient::post(const string &data) {
 
     t1.print();
 
-    Timer t2("HttpClient::post: perform");
+    SimpleTimer t2("HttpClient::post: perform");
 
     CURLcode code = curl_easy_perform(m_handle);
 
@@ -101,9 +95,7 @@ string HttpClient::post(const string &data) {
 
 size_t HttpClient::write_data_cb(void *buffer, size_t size, size_t nmemb, void *user_ptr) {
 
-    Timer t1("HttpClient::write_data_cb");
-
-//    cerr << "write data cb called" << endl;
+    SimpleTimer t1("HttpClient::write_data_cb");
 
     string output((char *) buffer, size * nmemb);
 

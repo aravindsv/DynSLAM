@@ -4,10 +4,13 @@ import numpy as np
 import time
 import cv2
 from flask_compress import Compress
+from werkzeug.serving import WSGIRequestHandler
 
 import segment
 
 import server_result_pb2
+
+WSGIRequestHandler.protocol_version = "HTTP/1.1"
 
 OCTET_STREAM = 'application/octet-stream'
 

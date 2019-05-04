@@ -74,6 +74,9 @@ DEFINE_int32(fusion_every, 1, "Fuse every kth frame into the map. Used for evalu
                               "behavior under reduced temporal resolution.");
 DEFINE_bool(autoplay, false, "Whether to start with autoplay enabled. Useful for batch experiments.");
 
+DEFINE_string(segment_host, "127.0.0.1", "segmentation server host");
+DEFINE_string(segment_port, "5000", "segmentation server port");
+
 // Note: the [RIP] tags signal spots where I wasted more than 30 minutes debugging a small, silly
 // issue, which could easily be avoided in the future.
 
@@ -1236,8 +1239,10 @@ void BuildDynSlamKittiOdometry(const string &dataset_root,
 
 
   auto segmentation_provider = new instreclib::segmentation::LiveSegmentationProvider(
-          // using for previews
-          seg_folder, frame_offset, static_cast<float>(downscale_factor)
+//           using for previews
+          seg_folder, frame_offset, static_cast<float>(downscale_factor),
+          // server config
+          FLAGS_segment_host, FLAGS_segment_port
           );
 
       VisualOdometryStereo::parameters sf_params;

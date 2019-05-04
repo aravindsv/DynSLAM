@@ -20,6 +20,8 @@ namespace segmentation {
 class LiveSegmentationProvider : public SegmentationProvider {
 
     HttpClient m_client;
+    std::string m_host;
+    std::string m_port;
 
     // legacy from precomputed provider
     const std::string seg_folder_;
@@ -29,14 +31,14 @@ class LiveSegmentationProvider : public SegmentationProvider {
 
 public:
 
-    LiveSegmentationProvider(const std::string &seg_folder, int frame_offset, float scale)
-    : seg_folder_(seg_folder),
-      frame_idx_(frame_offset),
-      last_seg_preview_(nullptr),
-      input_scale_(scale)
-    {
-
-    }
+    LiveSegmentationProvider(const std::string &seg_folder, int frame_offset, float scale,
+            const std::string& host, const std::string& port)
+    : m_client(host, port),
+    seg_folder_(seg_folder),
+    frame_idx_(frame_offset),
+    last_seg_preview_(nullptr),
+    input_scale_(scale)
+    {}
 
     std::shared_ptr<InstanceSegmentationResult> SegmentFrame(const cv::Mat3b &rgb) override;
 

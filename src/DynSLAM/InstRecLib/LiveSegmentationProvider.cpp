@@ -12,7 +12,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "SegmentationDataset.h"
-#include "Timer.h"
+#include "SimpleTimer.h"
 
 
 //#include <boost/process.hpp>
@@ -122,13 +122,13 @@ std::shared_ptr<InstanceSegmentationResult> make_segmentation_result(const Serve
 
         // Need to generate delete mask as least... just using the same for all 3 now.
         InstanceDetection instance_detection(detection.class_probability(), detection.class_id(),
-                                             copy_mask, delete_mask, conservative_mask, &kPascalVoc2012);
+                                             copy_mask, delete_mask, conservative_mask, &kCoco);
 
         detections.push_back(instance_detection);
     }
 
     // TODO: pascal should be wrong. Set up POCO categories.
-    return make_shared<InstanceSegmentationResult>(&kPascalVoc2012, detections, 1000);
+    return make_shared<InstanceSegmentationResult>(&kCoco, detections, 1000);
 }
 
 static void disp(cv::Mat mat) {
@@ -141,7 +141,7 @@ static void disp(cv::Mat mat) {
 
 std::shared_ptr<InstanceSegmentationResult> LiveSegmentationProvider::post(const cv::Mat3b &rgb) {
 
-    Timer t1("live seg post: serialization");
+    SimpleTimer t1("live seg post: serialization");
 
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -157,13 +157,13 @@ std::shared_ptr<InstanceSegmentationResult> LiveSegmentationProvider::post(const
 
     t1.print();
 
-    Timer t2("live seg post: calling http client post");
+    SimpleTimer t2("live seg post: calling http client post");
 
     string output = m_client.post(data);
 
     t2.print();
 
-    Timer t3("live seg post: parsing");
+    SimpleTimer t3("live seg post: parsing");
 
     ServerResult server_result;
 
