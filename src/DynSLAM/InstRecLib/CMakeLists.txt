@@ -54,8 +54,11 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/server_result.proto)
 protobuf_generate_python(PROTO_PY proto/server_result.proto)
 
-message("TESTING!!!!")
+message("PROTOC_LIBRARY_LOCATIONS")
 message(${Protobuf_PROTOC_EXECUTABLE})
+message(${Protobuf_LIBRARY})
+message(${Protobuf_PROTOC_LIBRARY})
+message(${Protobuf_INCLUDE_DIR})
 
 
 add_library(InstRecLib
