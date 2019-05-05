@@ -44,8 +44,8 @@ void DSHandler3D::MouseMotion(pangolin::View &view, int x, int y, int button_sta
 
       Eigen::Vector3d newMotionX = direction.cross(up_v).normalized() * dx * 0.05f * trans_rot_scale_;
       Eigen::Vector3d newMotionY = direction.cross(up_v).cross(direction).normalized() * dy * 0.05f * trans_rot_scale_;
-      eye += newMotionX;
-      eye += newMotionY;
+      eye -= newMotionX;
+      eye -= newMotionY;
 
       UpdateModelViewMatrix();
     }
@@ -91,10 +91,10 @@ void DSHandler3D::Mouse(pangolin::View &view,
 
   if (pressed) {
     if (button == pangolin::MouseWheelUp) {
-      eye += direction.normalized() * zoom_scale_;
+      eye -= direction.normalized() * zoom_scale_;
     }
     else if(button == pangolin::MouseWheelDown) {
-      eye -= direction.normalized() * zoom_scale_;
+      eye += direction.normalized() * zoom_scale_;
     }
 
     UpdateModelViewMatrix();
