@@ -92,6 +92,9 @@ ENDIF()
 # We rely on OpenCV for image IO and manipulation. Moreover, our (future) Caffe
 # dependencies will require it anyway...
 find_package(OpenCV REQUIRED)
+message("***********************************")
+message(${OpenCV_INCLUDE_DIRS})
+message("***********************************")
 
 # TODO(andrei): See pangolin's 'external' folder for neat ways of bringing in dependencies
 # from GitHub and building them if necessary.
