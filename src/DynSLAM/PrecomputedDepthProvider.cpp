@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include <highgui.h>
+#include <opencv/highgui.h>
 #include "PrecomputedDepthProvider.h"
 #include "Utils.h"
 #include "../pfmLib/ImageIOpfm.h"

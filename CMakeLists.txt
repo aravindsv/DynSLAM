@@ -21,7 +21,7 @@ endmacro()
 #message(STATUS "backwards-cpp-enhanced stack traces? " ${WITH_BACKWARDS_CPP})
 
 # We use Eigen for generic matrix support and linear algebra routines.
-# set(EIGEN3_ROOT ${PROJECT_SOURCE_DIR}/src/eigen)
+set(EIGEN3_ROOT ${PROJECT_SOURCE_DIR}/src/eigen)
 # set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(Eigen3 3.3 REQUIRED)
@@ -92,6 +92,9 @@ ENDIF()
 # We rely on OpenCV for image IO and manipulation. Moreover, our (future) Caffe
 # dependencies will require it anyway...
 find_package(OpenCV REQUIRED)
+message("***********************************")
+message(${OpenCV_INCLUDE_DIRS})
+message("***********************************")
 
 # TODO(andrei): See pangolin's 'external' folder for neat ways of bringing in dependencies
 # from GitHub and building them if necessary.

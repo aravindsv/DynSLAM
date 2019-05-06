@@ -15,6 +15,7 @@
 #include "DynSlam.h"
 #include "PrecomputedDepthProvider.h"
 #include "InstRecLib/VisoSparseSFProvider.h"
+#include "InstRecLib/LiveSegmentationProvider.h"
 #include "DSHandler3D.h"
 #include "Evaluation/Evaluation.h"
 #include "Evaluation/ErrorVisualizationCallback.h"
@@ -72,6 +73,12 @@ DEFINE_bool(chase_cam, false, "Whether to preview the reconstruction in chase ca
 DEFINE_int32(fusion_every, 1, "Fuse every kth frame into the map. Used for evaluating the system's "
                               "behavior under reduced temporal resolution.");
 DEFINE_bool(autoplay, false, "Whether to start with autoplay enabled. Useful for batch experiments.");
+
+DEFINE_bool(use_live_segmentation, false, "Whether to use the live Mask R-CNN-based segmentation provider"
+                                          " or not. If this is false (default behavior), use precomputed"
+                                          " segmentation provider");
+DEFINE_string(segment_host, "127.0.0.1", "segmentation server host");
+DEFINE_string(segment_port, "5000", "segmentation server port");
 
 // Note: the [RIP] tags signal spots where I wasted more than 30 minutes debugging a small, silly
 // issue, which could easily be avoided in the future.
@@ -1230,10 +1237,22 @@ void BuildDynSlamKittiOdometry(const string &dataset_root,
       voxel_decay_params,
       FLAGS_use_depth_weighting);
 
+
   const string seg_folder = dataset_root + "/" + input_config.segmentation_folder;
-  auto segmentation_provider =
-      new instreclib::segmentation::PrecomputedSegmentationProvider(
-          seg_folder, frame_offset, static_cast<float>(downscale_factor));
+
+  SegmentationProvider *segmentation_provider;
+  if (FLAGS_use_live_segmentation) {
+    segmentation_provider = new instreclib::segmentation::LiveSegmentationProvider(
+//        using for previews
+          seg_folder, frame_offset, static_cast<float>(downscale_factor),
+          // server config
+          FLAGS_segment_host, FLAGS_segment_port
+          );
+  }
+  else {
+    segmentation_provider = new instreclib::segmentation::PrecomputedSegmentationProvider(
+         seg_folder, frame_offset, static_cast<float>(downscale_factor));
+  }
 
   VisualOdometryStereo::parameters sf_params;
   // TODO(andrei): The main VO (which we're not using viso2 for, at the moment (June '17) and the
