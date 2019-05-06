@@ -74,6 +74,9 @@ DEFINE_int32(fusion_every, 1, "Fuse every kth frame into the map. Used for evalu
                               "behavior under reduced temporal resolution.");
 DEFINE_bool(autoplay, false, "Whether to start with autoplay enabled. Useful for batch experiments.");
 
+DEFINE_bool(use_live_segmentation, false, "Whether to use the live Mask R-CNN-based segmentation provider"
+                                          " or not. If this is false (default behavior), use precomputed"
+                                          " segmentation provider");
 DEFINE_string(segment_host, "127.0.0.1", "segmentation server host");
 DEFINE_string(segment_port, "5000", "segmentation server port");
 
@@ -1233,19 +1236,22 @@ void BuildDynSlamKittiOdometry(const string &dataset_root,
 
 
   const string seg_folder = dataset_root + "/" + input_config.segmentation_folder;
-//  auto segmentation_provider =
-//      new instreclib::segmentation::PrecomputedSegmentationProvider(
-//          seg_folder, frame_offset, static_cast<float>(downscale_factor));
 
-
-  auto segmentation_provider = new instreclib::segmentation::LiveSegmentationProvider(
-//           using for previews
+  SegmentationProvider *segmentation_provider;
+  if (FLAGS_use_live_segmentation) {
+    segmentation_provider = new instreclib::segmentation::LiveSegmentationProvider(
+//        using for previews
           seg_folder, frame_offset, static_cast<float>(downscale_factor),
           // server config
           FLAGS_segment_host, FLAGS_segment_port
           );
+  }
+  else {
+    segmentation_provider = new instreclib::segmentation::PrecomputedSegmentationProvider(
+         seg_folder, frame_offset, static_cast<float>(downscale_factor));
+  }
 
-      VisualOdometryStereo::parameters sf_params;
+  VisualOdometryStereo::parameters sf_params;
   // TODO(andrei): The main VO (which we're not using viso2 for, at the moment (June '17) and the
   // "VO" we use to align object instance frames have VASTLY different requirements, so we should
   // use separate parameter sets for them.
